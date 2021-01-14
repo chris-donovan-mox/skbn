@@ -3,11 +3,19 @@ package skbn
 import (
 	"bytes"
 	"fmt"
-	"github.com/chris-donovan-mox/skbn/pkg/utils"
 	"io"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/chris-donovan-mox/skbn/pkg/utils"
+
+	core_v1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
+	"k8s.io/client-go/tools/clientcmd"
+	"k8s.io/client-go/tools/remotecommand"
 )
 
 // K8sClient holds a clientset and a config

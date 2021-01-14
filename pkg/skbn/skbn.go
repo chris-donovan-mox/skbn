@@ -50,7 +50,6 @@ func TestImplementationsExist(srcPrefix, dstPrefix string) error {
 	switch srcPrefix {
 	case "k8s":
 	case "s3":
-	case "abs":
 	case "gcs":
 	default:
 		return fmt.Errorf(srcPrefix + " not implemented")
@@ -59,7 +58,6 @@ func TestImplementationsExist(srcPrefix, dstPrefix string) error {
 	switch dstPrefix {
 	case "k8s":
 	case "s3":
-	case "abs":
 	case "gcs":
 	default:
 		return fmt.Errorf(dstPrefix + " not implemented")
@@ -198,12 +196,6 @@ func GetListOfFiles(client interface{}, prefix, path string) ([]string, error) {
 			return nil, err
 		}
 		relativePaths = paths
-	case "abs":
-		paths, err := GetListOfFilesFromAbs(ctx, client, path)
-		if err != nil {
-			return nil, err
-		}
-		relativePaths = paths
 	case "gcs":
 		paths, err := GetListOfFilesFromGcs(ctx, client, path)
 		if err != nil {
@@ -233,11 +225,6 @@ func Download(srcClient interface{}, srcPrefix, srcPath string, writer io.Writer
 		if err != nil {
 			return err
 		}
-	case "abs":
-		err := DownloadFromAbs(ctx, srcClient, srcPath, writer)
-		if err != nil {
-			return err
-		}
 	case "gcs":
 		err := DownloadFromGcs(ctx, srcClient, srcPath, writer)
 		if err != nil {
@@ -263,11 +250,6 @@ func Upload(dstClient interface{}, dstPrefix, dstPath, srcPath string, reader io
 		}
 	case "s3":
 		err := UploadToS3(dstClient, dstPath, srcPath, reader)
-		if err != nil {
-			return err
-		}
-	case "abs":
-		err := UploadToAbs(ctx, dstClient, dstPath, srcPath, reader)
 		if err != nil {
 			return err
 		}
@@ -302,17 +284,6 @@ func initClient(ctx context.Context, existingClient interface{}, prefix, path, t
 			break
 		}
 		client, err := GetClientToS3(path)
-		if err != nil {
-			return nil, "", err
-		}
-		newClient = client
-
-	case "abs":
-		if isTestedAndClientExists(prefix, tested, existingClient) {
-			newClient = existingClient
-			break
-		}
-		client, err := GetClientToAbs(ctx, path)
 		if err != nil {
 			return nil, "", err
 		}

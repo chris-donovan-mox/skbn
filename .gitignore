@@ -19,3 +19,6 @@ bin/
 # IntelliJ IDEA
 .idea/
 skbn.iml
+
+# vim .swp files
+*.swp
